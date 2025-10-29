@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innoster - Internship Application</title>
+
+  <!-- API key injected by Flask -->
+  <meta name="api-key" content="{{ api_key }}">
+
+  <style>
+    /* (Your CSS — preserved + minor improvements) */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    body { background:linear-gradient(135deg,#74ebd5 0%,#9face6 100%); min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px; }
+    .container { background:#fff; padding:28px 32px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,.15); width:640px; max-width:100%; }
+    h2 { text-align:center; margin-bottom:8px; color:#333; font-size:26px; }
+    h3 { margin:14px 0; color:#444; }
+    p,label,legend { margin:10px 0 6px; color:#333; font-size:15px; }
+    input, textarea, select { width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:8px; outline:none; transition:box-shadow .18s, border-color .18s; }
+    input:focus, textarea:focus, select:focus { border-color:#4a90e2; box-shadow:0 0 6px rgba(74,144,226,0.3); }
+    fieldset { border:1px solid #e0e0e0; border-radius:8px; padding:10px 12px; margin-top:8px; }
+    legend { font-weight:700; color:#333; }
+    .row { display:flex; gap:12px; }
+    .col { flex:1; }
+    .small { width:140px; }
+    input[type="submit"] { display:block; width:100%; padding:12px; margin-top:18px; background:#4a90e2; color:#fff; border:none; border-radius:10px; cursor:pointer; }
+    input[type="submit"]:hover { background:#357abd; }
+    .note { font-size:13px; color:#666; margin-top:6px; }
+    #results { margin-top:16px; padding:12px; background:#f6fbff; border:1px solid #dfefff; border-radius:8px; display:none; }
+    table { width:100%; border-collapse:collapse; margin-top:8px; }
+    th, td { padding:8px 10px; border:1px solid #eee; text-align:left; }
+    th { background:#007acc; color:#fff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form id="appForm" enctype="multipart/form-data" autocomplete="off">
+      <h2>Sign in</h2>
+
+      <h3>Contact Info</h3>
+      <p class="note">Required fields are marked *</p>
+
+      <p>Name:* <input type="text" name="name" required></p>
+
+      <fieldset>
+        <legend>Gender*</legend>
+        <p>
+          <label><input type="radio" name="gender" value="Male" required> Male</label>
+          <label style="margin-left:10px;"><input type="radio" name="gender" value="Female"> Female</label>
+          <label style="margin-left:10px;"><input type="radio" name="gender" value="Other"> Other</label>
+        </p>
+      </fieldset>
+
+      <p>Address*: <textarea name="address" rows="3" required></textarea></p>
+
+      <div class="row">
+        <div class="col"><p>Email* <input type="email" name="email" required></p></div>
+        <div class="col small"><p>Phone* <input type="tel" name="phone" required pattern="[0-9]{7,15}" placeholder="digits only"></p></div>
+      </div>
+
+      <p>Nationality*:
+        <select name="nationality" required>
+          <option value="">-Select-</option>
+          <option value="Indian">Indian</option>
+          <option value="Other">Other</option>
+        </select>
+      </p>
+
+      <p>Highest Qualification*:
+        <select name="qualification" required>
+          <option value="">-Select-</option>
+          <option value="High School">High School</option>
+          <option value="Certificate from ITI">Certificate from ITI</option>
+          <option value="Diploma from Polytechnic Institute">Diploma from Polytechnic Institute</option>
+          <option value="Bachelor Degree">Bachelor Degree</option>
+        </select>
+      </p>
+
+      <div class="row">
+        <div class="col">
+          <p>DOB:* <input type="date" name="dob" min="2001-01-01" max="2004-12-31" required></p>
+        </div>
+        <div class="col">
+          <p>Family Income* (max 800000) <input type="number" name="income" min="0" max="800000" required></p>
+        </div>
+      </div>
+
+      <p>Upload income proof (PDF/JPG/PNG)* <input type="file" name="proof" accept=".pdf,.jpg,.png" required></p>
+
+      <h3>Preferences & Eligibility</h3>
+
+      <p>Preferred Sector:
+        <select name="preferred_sector" required>
+          <option value="">-Select-</option>
+          <option>IT</option><option>Finance</option><option>Marketing</option><option>Design</option>
+          <option>Healthcare</option><option>Education</option><option>Engineering</option><option>Data Science</option>
+          <option>Cybersecurity</option><option>Cloud</option>
+        </select>
+      </p>
+
+      <p>Preferred Location:
+        <select name="preferred_location" required>
+          <option value="">-Select-</option>
+          <option>Delhi</option><option>Mumbai</option><option>Bengaluru</option><option>Hyderabad</option>
+          <option>Chennai</option><option>Kolkata</option><option>Pune</option><option>Ahmedabad</option>
+          <option>Jaipur</option><option>Lucknow</option>
+        </select>
+      </p>
+
+      <p>Skills* (comma separated) <input type="text" name="skills" placeholder="e.g. Python, SQL, Machine Learning" required></p>
+
+      <!-- Employment / Education / Distance -->
+      <p>Are you currently employed full-time?</p>
+      <label><input type="radio" name="employment" value="yes" required> Yes</label>
+      <label style="margin-left:10px;"><input type="radio" name="employment" value="no"> No</label>
+
+      <p style="margin-top:10px;">Are you engaged in full-time education?</p>
+      <label><input type="radio" name="fulltime_education" value="yes" required> Yes</label>
+      <label style="margin-left:10px;"><input type="radio" name="fulltime_education" value="no"> No</label>
+
+      <p style="margin-top:10px;">Are you enrolled in online/distance learning?</p>
+      <label><input type="radio" name="distance_learning" value="yes" required> Yes</label>
+      <label style="margin-left:10px;"><input type="radio" name="distance_learning" value="no"> No</label>
+
+      <input type="submit" value="Submit & Get Recommendations">
+    </form>
+
+    <div id="results" aria-live="polite"></div>
+  </div>
+
+  <script>
+    // Read API key injected by Flask
+    const API_KEY = document.querySelector('meta[name="api-key"]').content || '';
+
+    const form = document.getElementById('appForm');
+    const resultsDiv = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Eligibility checks (same rules you had)
+      const employment = form.querySelector('input[name="employment"]:checked')?.value;
+      const fullEdu = form.querySelector('input[name="fulltime_education"]:checked')?.value;
+      const distance = form.querySelector('input[name="distance_learning"]:checked')?.value;
+
+      if (!employment || !fullEdu || !distance) {
+        alert('Please answer all eligibility questions.');
+        return;
+      }
+      if (employment === 'yes') { alert('You are not eligible: Full-time employment is not allowed.'); return; }
+      if (fullEdu === 'yes') { alert('You are not eligible: Full-time education is not allowed.'); return; }
+      if (distance === 'no') { alert('You are not eligible: You must be in online/distance learning to apply.'); return; }
+
+      // Build FormData to include file
+      const fd = new FormData(form);
+
+      // Normalize skills to use semicolon delimiter expected by backend
+      let skillsRaw = fd.get('skills') || '';
+      // convert comma separated to "Skill; Skill2"
+      skillsRaw = skillsRaw.split(',').map(s => s.trim()).filter(Boolean).join('; ');
+      fd.set('skills', skillsRaw);
+
+      // Add API key in header
+      try {
+        const resp = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'X-API-KEY': API_KEY },
+          body: fd
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(()=>({error:'server error'}));
+          resultsDiv.style.display = 'block';
+          resultsDiv.innerHTML = `<p style="color:red">Error: ${err.error || resp.statusText}</p>`;
+          return;
+        }
+
+        const data = await resp.json();
+
+        // display applicant summary + recommendations
+        const applicant = data.applicant;
+        const recs = data.recommendations;
+
+        let html = `<h3>Applicant: ${escapeHtml(applicant.name)} (ID: ${applicant.applicant_id})</h3>`;
+        html += `<p><strong>Qualification:</strong> ${escapeHtml(applicant.education_level)} &nbsp; <strong>Income:</strong> ${escapeHtml(applicant.income)}</p>`;
+        html += `<p><strong>Preferred:</strong> ${escapeHtml(applicant.preferred_sector)} @ ${escapeHtml(applicant.preferred_location)}</p>`;
+        html += `<p><strong>Skills:</strong> ${escapeHtml(applicant.skills)}</p>`;
+
+        html += `<h4>Top Recommendations</h4>`;
+        html += `<table><thead><tr><th>Internship</th><th>Sector</th><th>Location</th><th>Match %</th></tr></thead><tbody>`;
+        recs.forEach(r => {
+          html += `<tr>
+                    <td>${escapeHtml(r.internship_title)}</td>
+                    <td>${escapeHtml(r.sector)}</td>
+                    <td>${escapeHtml(r.location)}</td>
+                    <td>${r.match_percentage}%</td>
+                  </tr>`;
+        });
+        html += `</tbody></table>`;
+
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = `<p style="color:red">Network or server error.</p>`;
+      }
+    });
+
+    // Simple sanitizer for innerHTML (minimal)
+    function escapeHtml(text) {
+      if (!text && text !== 0) return '';
+      return String(text).replace(/[&<>"]/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    }
+  </script>
+</body>
+</html>
